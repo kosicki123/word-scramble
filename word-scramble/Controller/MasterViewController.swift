@@ -60,6 +60,33 @@ class MasterViewController: UITableViewController {
         presentViewController(activityController, animated: true, completion: nil)
     }
     
+    func submitAnswer(answer: String) {
+        let lowerAnswer = answer.lowercaseString
+        
+        if wordIsPossible(lowerAnswer) {
+            if wordIsOriginal(lowerAnswer) {
+                if wordIsReal(lowerAnswer) {
+                    objects.insert(answer, atIndex: 0)
+                    
+                    let indexPath = NSIndexPath(forRow: 0, inSection: 0)
+                    tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+                }
+            }
+        }
+    }
+    
+    func wordIsPossible(word: String) -> Bool {
+        return true
+    }
+    
+    func wordIsOriginal(word: String) -> Bool {
+        return true
+    }
+    
+    func wordIsReal(word: String) -> Bool {
+        return true
+    }
+    
     // MARK: - Table View
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
