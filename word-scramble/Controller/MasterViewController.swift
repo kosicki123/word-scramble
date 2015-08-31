@@ -70,28 +70,58 @@ class MasterViewController: UITableViewController {
                     
                     let indexPath = NSIndexPath(forRow: 0, inSection: 0)
                     tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+                } else {
+                    showErrorWithMessage("You can't just make them up, you know!", title: "Word not recognised")
                 }
+            } else {
+                showErrorWithMessage("Be more original!", title: "Word used already")
             }
+        } else {
+            showErrorWithMessage("You can't spell that word from '\(title!.lowercaseString)'!", title: "Word not possible")
         }
     }
     
+    func showErrorWithMessage(message: String, title: String) {
+        let activityController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+        activityController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+        presentViewController(activityController, animated: true, completion: nil)
+    }
+    
+    //MARK: - Word Checking
+    
     func wordIsPossible(word: String) -> Bool {
+        var tempWord = title!.lowercaseString
+        
+        for letter in word {
+            if let position = tempWord.rangeOfString(String(letter)) {
+                if position.isEmpty {
+                    return false
+                } else {
+                    tempWord.removeAtIndex(position.startIndex)
+                }
+            } else {
+                return false
+            }
+        }
+        
         return true
     }
     
     func wordIsOriginal(word: String) -> Bool {
-        return true
+        return !contains(objects, word)
     }
     
-    func wordIsReal(word: String) -> Bool {
-        return true
+    func wordIsReal(word: NSString) -> Bool {
+        let checker = UITextChecker()
+        let range = NSMakeRange(0, word.length)
+        let misspelledRange = checker.rangeOfMisspelledWordInString(word as String, range: range, startingAt: 0, wrap: false, language: "en")
+        
+        return misspelledRange.location == NSNotFound
     }
-    
-    // MARK: - Table View
+}
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return 1
-    }
+extension MasterViewController {
+    // MARK: - Table View
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return objects.count
